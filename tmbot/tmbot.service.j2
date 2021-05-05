@@ -1,0 +1,33 @@
+# Systemd tmbot service file
+#
+# Copyright (C) 2000-2016 Kern Sibbald
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# /lib/systemd/system/tmbot.service
+#
+# Description:
+#    Used to start the tmbot monitoring service
+#
+#    enable : systemctl enable tmbot
+#    start : systemctl start tmbot
+#
+#
+
+# from http://www.freedesktop.org/software/systemd/man/systemd.unit.html
+[Unit]
+Description=TMBot service
+Requires=network.target
+After=network.target
+
+# from http://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Service]
+Type=process
+User={{tmbot_user}}
+Group={{tmbot_group}}
+ExecStart={{tmbot_bin_fname}} -c {{tmbot_cfg_fname}}
+StandardError=syslog
+SuccessExitStatus=0 1 2 8 SIGKILL
+
+[Install]
+WantedBy=multi-user.target
+

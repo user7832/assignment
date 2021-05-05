@@ -1,0 +1,41 @@
+---
+- name: Delete objects
+  shell: |
+    if /usr/local/bin/kubectl get "{{item.objtype}}" "{{item.objname}}" > /dev/null; then
+      /usr/local/bin/kubectl delete "{{item.objtype}}" "{{item.objname}}"
+    fi
+  loop: "{{ kub_objects }}"
+  when: "'k3s_servers' in group_names and 'delete' in ansible_run_tags"
+  run_once: True
+  tags: delete
+
+- block:
+  - name: Copy object files
+    copy:
+      src: "{{item.fname}}"
+      dest: /tmp
+    loop: "{{ kub_objects }}"
+  - name: Create objects
+    shell: |
+      if ! /usr/local/bin/kubectl get "{{item.objtype}}" "{{item.objname}}" > /dev/null; then
+        /usr/local/bin/kubectl create -f /tmp/"{{item.fname}}"
+      fi
+    loop: "{{ kub_objects }}"
+  - name: Clean work files
+    file:
+      path: /tmp/"{{item.fname}}"
+      state: absent
+    loop: "{{ kub_objects }}"
+
+  - name: Check if service ready
+    become: False
+    local_action:
+      module: uri
+      url: http://{{inventory_hostname}}/index.php
+    register: http_response
+    tags: test
+    until: http_response.status == 200
+    retries: 50
+    delay: 10
+  when: "'k3s_servers' in group_names"
+  run_once: True

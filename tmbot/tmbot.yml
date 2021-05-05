@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: true
+  vars:
+      tmbot_pvenv_path: /opt/tmbot-pvenv
+      tmbot_user: tmbot
+      tmbot_group: tmbot
+      tmbot_bin_fname: /usr/local/bin/tmbot.py
+      tmbot_cfg_fname: /usr/local/etc/tmbot.cfg
+      tmbot_test_fname: /usr/local/bin/test_tmbot.py
+  tasks:
+  - name: Check if python36 is installed
+    stat: path="/usr/bin/python36"
+    register: tmp_python36_stat
+  - fail: msg="Python 3.6 not found. Exit"
+    when: not tmp_python36_stat['stat']['exists']
+
+  - name: Check if pip3.6 is installed
+    stat: path="/usr/local/bin/pip3.6"
+    register: tmp_pip36_stat
+  - block:
+    - name: Download pip
+      shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      args:
+        chdir: /tmp
+    - name: Install pip for python 3.6
+      shell: /usr/bin/python36 /tmp/get-pip.py
+    when: not tmp_pip36_stat['stat']['exists']
+
+  - name: Check if Python VENV is already exists
+    stat: path="{{tmbot_pvenv_path}}"
+    register: tmp_pvenv_stat
+  - name: Create tmbot python virtual environment
+    shell: python36 -m venv /opt/tmbot-pvenv
+    when: not tmp_pvenv_stat['stat']['exists']
+  - name: Install required python modules
+    pip: virtualenv="{{tmbot_pvenv_path}}" state="latest" name="configparser python-daemon requests"
+
+  - name: Copy tmbot executable
+    copy: dest="{{tmbot_bin_fname}}" mode="0755" owner="root" group="root" src="tmbot.py"
+  - name: Copy tmbot config file
+    copy: dest="{{tmbot_cfg_fname}}" mode="0664" owner="root" group="root" src="tmbot.cfg"
+  - name: Copy tmbot test
+    copy: dest="{{tmbot_test_fname}}" mode="0664" owner="root" group="root" src="test_tmbot.py" 
+
+  - name: Test tmbot
+    shell: "{{tmbot_pvenv_path}}/bin/python ./test_tmbot.py"
+    args:
+        chdir: "/usr/local/bin"
+    register: tmp_test_result
+  - fail: msg="TMBot test fail. Something wrong."
+    when: tmp_test_result['rc']|int != 0
+
+  - name: Create group for tmbot service
+    group: name="{{tmbot_group}}" state=present
+  - name: Create user for tmbot service
+    user: name="{{tmbot_user}}" group="{{tmbot_group}}" state=present
+  - name: Copy tmbot systemd service
+    template: dest="/etc/systemd/system/tmbot.servce" mode="0664" owner="root" group="root" src="tmbot.service.j2"
+  - name: Reload systemd
+    shell: systemctl daemon-reload
+    # We won't enable service automaticaly, it's up to user

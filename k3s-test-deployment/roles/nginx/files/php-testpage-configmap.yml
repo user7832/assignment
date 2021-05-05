@@ -1,0 +1,14 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: php-testpage
+data:
+  index.php: |
+    <html>
+      <head>
+        <title>PHP TEST PAGE</title>
+      </head>
+      <body>
+        <?php phpinfo(); ?>
+      </body>
+    </html>

@@ -1,0 +1,17 @@
+---
+kub_objects:
+  - fname: php-testpage-configmap.yml
+    objname: php-testpage
+    objtype: configmap
+  - fname: nginx-config-configmap.yml
+    objname: nginx-config
+    objtype: configmap
+  - fname: nginx-php-pod.yml
+    objname: nginx-php
+    objtype: pod
+  - fname: nginx-service.yml
+    objname: nginx
+    objtype: service
+  - fname: nginx-ingress.yml
+    objname: nginx-ingress
+    objtype: ingress

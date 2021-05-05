@@ -1,0 +1,4 @@
+---
+k3s_bin_url: "https://github.com/k3s-io/k3s/releases/download/v1.20.4%2Bk3s1/k3s"
+k3s_bin_checksum: "sha256:1c7b68b0b7d54f21a9c1727545a7db181668115f161a3986bc137261dd817e98"
+k3s_token_path: "/var/lib/rancher/k3s/server/node-token"

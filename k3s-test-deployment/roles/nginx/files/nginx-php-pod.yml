@@ -1,0 +1,26 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-php
+  labels:
+    app: nginx-php
+spec:
+  volumes:
+    - name: nginx-config-volume
+      configMap:
+        name: nginx-config
+    - name: php-testpage-volume
+      configMap:
+        name: php-testpage
+  containers:
+    - image:  php:7.2-fpm
+      name: phpapp
+      volumeMounts:
+        - name: php-testpage-volume
+          mountPath: /var/www/html
+    - image: nginx:1.7.9
+      name: nginx
+      volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
