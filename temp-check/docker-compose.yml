@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+    exporter:
+        build:
+            context: ./temp-exporter
+            dockerfile: Dockerfile.exporter
+        image: exporter:my
+        environment:
+            - WE_APIKEY=${WE_APIKEY}
+            - WE_CITY=${WE_CITY}
