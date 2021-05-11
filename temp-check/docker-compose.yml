@@ -21,10 +21,10 @@ services:
         image: grafana/grafana
         ports:
           - "3000:3000"
-       environment:
+        environment:
           - GF_AUTH_ANONYMOUS_ENABLED=true
-          - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/dashboards/temperature-dashboards.json          
+          - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/dashboards/temperature-dashboard.json
         volumes:
           - ./grafana/provision-datasources.yml:/etc/grafana/provisioning/datasources/provision-datasources.yml:ro
           - ./grafana/provision-dashboards.yml:/etc/grafana/provisioning/dashboards/provision-dashboards.yml:ro
-          - ./grafana/temperature-dashboards.json:/etc/dashboards/temperature-dashboards.json:ro
+          - ./grafana/temperature-dashboard.json:/etc/dashboards/temperature-dashboard.json:ro
