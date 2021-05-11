@@ -1,6 +1,6 @@
 FROM golang:1.16-stretch AS builder
 ENV GO111MODULE=on \
-    CGO_ENABLED=1
+    CGO_ENABLED=0
 WORKDIR /build
 COPY weather_exporter.go .
 RUN go mod init exporter && go get github.com/prometheus/client_golang/prometheus &&\
@@ -8,8 +8,8 @@ RUN go mod init exporter && go get github.com/prometheus/client_golang/prometheu
 
 FROM scratch
 EXPOSE 8612
-COPY --chown=0:0 --from=builder /etc/ssl/certs/* /etc/ssl/certs/
 COPY --chown=0:0 --from=builder /build/weather_exporter /
+COPY --chown=0:0 --from=builder /etc/ssl/certs/* /etc/ssl/certs/
 COPY --chown=0:0 --from=builder /lib64/ld-linux-x86-64.so.2 /lib64/
 COPY --chown=0:0 --from=builder /lib/x86_64-linux-gnu/libpthread.so.0 /lib/x86_64-linux-gnu/libc.so.6 /lib/
 USER 65534
