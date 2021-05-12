@@ -5,6 +5,7 @@ services:
             context: ./temp-exporter
             dockerfile: Dockerfile.exporter
         image: exporter:0.1
+        restart: on-failure
         expose:
             - "8612"
         environment:
@@ -12,6 +13,9 @@ services:
             - WE_CITY=${WE_CITY}
     prometheus:
         image: prom/prometheus
+        depends_on:
+            - exporter
+        restart: on-failure
         ports:
             - "9090:9090"
         volumes:
@@ -19,6 +23,9 @@ services:
             - /PROMETHEUS:/prometheus:rw
     grafana:
         image: grafana/grafana
+        depends_on:
+            - prometheus
+        restart: on-failure
         ports:
           - "3000:3000"
         environment:

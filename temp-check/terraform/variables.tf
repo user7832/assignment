@@ -9,7 +9,13 @@ variable "we_city" {
     default = "Tallin"
 }
 
-variable "key_name" {
+variable "key_pair_name" {
     type = string
     description = "AWS Key-pair name"
+}
+
+variable "aws_profile" {
+    type = string
+    description = "AWS profile"
+    default = "default"
 }

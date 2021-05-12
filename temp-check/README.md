@@ -19,3 +19,20 @@ Required technology stack:
  * Terraform 0.14.x
  * Any scripting language is ok for the program code
  * Feel free to use additional tools for the automation
+
+## Requirements
+In order to properly run current configuration, it's supposed that next resources are configured:
+For AWS:
+  * Terraform configuration is deployed into VPC and subnet with Internet access configured (used default)
+  * API key for weatherapi.com service is required
+For Azure:
+  * Azure confiuration wasn't tested due to absent Azure access
+
+## How to Run
+```
+cd terraform
+terraform init
+terraform apply -var="we_apikey=1234567890" -var="key_pair_name=key1"
+```
+
+Wait for a minute and access grafana URL which will be printed after terraform apply command

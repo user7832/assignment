@@ -53,7 +53,7 @@ resource "aws_instance" "monitoring_server" {
   instance_type = "t2.micro"
 
   user_data = templatefile(
-    "userdata.sh.tmpl",
+    "../userdata.sh.tmpl",
     {
       we_apikey = var.we_apikey,
       we_city = var.we_city
@@ -61,9 +61,13 @@ resource "aws_instance" "monitoring_server" {
   )
 
   vpc_security_group_ids = [aws_security_group.monitoring_sg.id]
-  key_name = var.key_name
+  key_name = var.key_pair_name
 
   tags = {
     app = "prom-temp"
   }
+}
+
+output "grafana_url" {
+    value = "http://${aws_instance.monitoring_server.public_dns}:3000"
 }
