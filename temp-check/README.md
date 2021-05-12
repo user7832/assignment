@@ -21,10 +21,12 @@ Required technology stack:
  * Feel free to use additional tools for the automation
 
 ## Requirements
-In order to properly run current configuration, it's supposed that next resources are configured:
+In order to properly run current configuration, it's supposed that next resources are configured
+
 For AWS:
   * Terraform configuration is deployed into VPC and subnet with Internet access configured (used default)
   * API key for weatherapi.com service is required
+
 For Azure:
   * Azure confiuration wasn't tested due to absent Azure access
 
